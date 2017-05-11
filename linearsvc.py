@@ -4,6 +4,8 @@ from sklearn.cross_validation import train_test_split
 from sklearn.utils import shuffle
 from sklearn.svm import LinearSVC
 from sklearn.grid_search import GridSearchCV
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 data = pd.read_csv("new_annotated.csv", encoding="latin-1",sep = '\t')
 data = data[['cmp_code', 'text']]
@@ -13,8 +15,7 @@ Y = data['cmp_code']
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size = .75)
 
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 
 
