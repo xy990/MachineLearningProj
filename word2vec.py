@@ -5,7 +5,7 @@ from zipfile import ZipFile
 from collections import Counter
 import pickle
 import re
-os.chdir('/Users/xy990/Downloads/ml-project/cleaned_1880')
+os.chdir('cleaned_Mar_28')
 zipfiles = glob('*zip')
 #all_str =" "
 #year_str =" "
