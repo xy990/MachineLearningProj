@@ -8,10 +8,15 @@ import gensim.models as g
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
 import pandas as pd
 import numpy as np
+import random
 from sklearn.cross_validation import train_test_split
 from sklearn.utils import shuffle
 from sklearn.svm import LinearSVC
 from sklearn.grid_search import GridSearchCV
+from sklearn.linear_model import LogisticRegression
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.multiclass import OneVsRestClassifier
 
 data = pd.read_csv("new_annotated.csv", encoding="latin-1",sep = '\t')
 data = data[['cmp_code', 'text']]
@@ -68,7 +73,7 @@ X_test = labelizeReviews(X_test, 'TEST')
 
 # In[181]:
 
-import random
+
 
 size = 400
 
@@ -127,8 +132,7 @@ for i in range(test_arrays.shape[0]):
 
 # In[201]:
 
-from sklearn.linear_model import LogisticRegression
-from sklearn.multiclass import OneVsRestClassifier
+
 classifier = OneVsRestClassifier(LogisticRegression())
 classifier.fit(train_arrays,train_labels )
 predicted = classifier.predict(test_arrays)
@@ -142,8 +146,7 @@ np.save('lrscore.npy',score)
 
 # In[204]:
 
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.multiclass import OneVsRestClassifier
+
 classifier1 = OneVsRestClassifier(RandomForestClassifier())
 classifier1.fit(train_arrays,train_labels )
 predicted = classifier1.predict(test_arrays)
