@@ -1,8 +1,3 @@
-
-# coding: utf-8
-
-# In[ ]:
-
 from numpy import prod
 from collections import Counter
 from nltk import sent_tokenize,ngrams,PorterStemmer,SnowballStemmer,WordNetLemmatizer
@@ -89,7 +84,7 @@ def gmean(phrase, termfreqs):
     pg = termfreqs[phrase]    
     return pg / (prod(p) ** (1/n))
 
-def train_phraser(documents, max_phrase_length=3, stemmer="snowball", vocab=None,
+def train_phraser(documents, max_phrase_length=3, stemmer=None, vocab=None,
                             min_doc_freq=None, min_gmean=None):    
     # take documents and get POS-gram dictionary
     
@@ -142,6 +137,7 @@ def train_phraser(documents, max_phrase_length=3, stemmer="snowball", vocab=None
         i += 1
     
     return gram2id, id2gram
+
 def apply_phraser(words, gram2id, max_phrase_length=3):
     """"apply phraser method to sentence."
          Input should be list of lower-case (stemmed) words"""
@@ -168,9 +164,6 @@ def apply_phraser(words, gram2id, max_phrase_length=3):
     return new_s
 
 
-# In[ ]:
-
-
 def case_feat_dict(case):
    
     phrase2id, id2phrase = train_phraser(case)
@@ -193,7 +186,7 @@ def case_feat_dict(case):
             case_feat.append(feat)
     return case_feat
 
-os.chdir('C:/Users/sherryyang/Desktop/bigdata/cleaned_Mar_28')
+os.chdir('/home/llq205/cleaned_Mar_28')
 zipfiles = glob('*zip')
 
 for zfname in zipfiles:        
@@ -205,7 +198,7 @@ for zfname in zipfiles:
     threshold = len(members) / 200    
     docfreqs = Counter()
 
-    zip_name = 'C:/Users/sherryyang/Desktop/bigdata/clean_feature/' + zfname[0:4]+'/'
+    zip_name = '/home/llq205/clean_ngram/' + zfname[0:4]+'/'
     #maj ='maj'
     os.makedirs(zip_name)
     #os.chdir(zip_name)

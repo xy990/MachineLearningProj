@@ -3,24 +3,26 @@
 
 # In[175]:
 
-import gensim.models as g
+import gensim
 
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
 import pandas as pd
 import numpy as np
-import random
 from sklearn.cross_validation import train_test_split
 from sklearn.utils import shuffle
 from sklearn.svm import LinearSVC
 from sklearn.grid_search import GridSearchCV
-from sklearn.linear_model import LogisticRegression
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.multiclass import OneVsRestClassifier
 
 data = pd.read_csv("new_annotated.csv", encoding="latin-1",sep = '\t')
 data = data[['cmp_code', 'text']]
 data.loc[data['cmp_code'] =='H'] = '999'
+
+df2 = data['text'].to_frame()
+df = data['cmp_code'].to_frame().applymap(lambda x: float(x))
+df= df.applymap(lambda x: int(x))
+df = df.applymap(lambda x: str(x))
+data = pd.concat([df,df2],axis =1)
+
 data = shuffle(data)
 
 
@@ -60,8 +62,6 @@ X_test = cleanText(X_test)
 def labelizeReviews(reviews, label_type):
     labelized =[]
     for i in range(len(reviews)):
-        
-
         result = reviews[i]
         label = '%s_%s'%(label_type,i)
         labelized.append(LabeledSentence(result,[label]))
@@ -73,9 +73,9 @@ X_test = labelizeReviews(X_test, 'TEST')
 
 # In[181]:
 
+import random
 
-
-size = 400
+size = 100
 
 #instantiate our DM and DBOW models
 model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, workers=3)
@@ -109,9 +109,9 @@ model_dm = gensim.models.Doc2Vec.load('dm.doc2vec')
 
 # In[198]:
 
-train_arrays = np.zeros((len(X_train), 400))
+train_arrays = np.zeros((len(X_train), 100))
 train_labels = np.zeros(len(X_train))
-test_arrays = np.zeros((len(X_test), 400))
+test_arrays = np.zeros((len(X_test), 100))
 test_labels = np.zeros(len(X_test))
 
 
@@ -132,10 +132,12 @@ for i in range(test_arrays.shape[0]):
 
 # In[201]:
 
-
+from sklearn.linear_model import LogisticRegression
+from sklearn.multiclass import OneVsRestClassifier
 classifier = OneVsRestClassifier(LogisticRegression())
 classifier.fit(train_arrays,train_labels )
-predicted = classifier.predict(test_arrays)
+predicted = classifier.predict_proba(test_arrays)
+np.save('lrproba.npy',predicted)
 
 
 # In[202]:
@@ -146,14 +148,23 @@ np.save('lrscore.npy',score)
 
 # In[204]:
 
-
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.multiclass import OneVsRestClassifier
 classifier1 = OneVsRestClassifier(RandomForestClassifier())
 classifier1.fit(train_arrays,train_labels )
-predicted = classifier1.predict(test_arrays)
+predicted1 = classifier1.predict_proba(test_arrays)
+np.save('rfproba.npy', predicted)
 
 
 # In[205]:
-
 score1 = classifier1.score(test_arrays, test_labels)
-np.save('lrscore.npy',score1)
+np.save('rfscore.npy',score1)
+
+
+np.save('svcd2target.npy',test_labels)
+lin_clf2 = LinearSVC(C =1, class_weight='balanced')
+
+d2 =lin_clf2.fit(train_arrays,train_labels).predict(test_arrays)
+
+np.save('svcd2vpredict.npy',d2)
 
